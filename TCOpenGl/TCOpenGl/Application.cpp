@@ -47,6 +47,9 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, buffer); // bind or select that buffer - PC
 	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positons, GL_STATIC_DRAW); // 6 times the amount of vertexes held in array "positions" - PC // define size of buffer
 
+	glEnableVertexAttribArray(0); // enable the VAP - PC
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);// detail on this composed in notes for future ref 
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
