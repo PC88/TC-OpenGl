@@ -1,4 +1,8 @@
 #include <iostream>
+
+#define GLEW_STATIC
+
+#include <GL\glew.h>
 #include <GLFW/glfw3.h>
 
 int main(void)
@@ -8,6 +12,8 @@ int main(void)
 	/* Initialize the library */
 	if (!glfwInit())
 		return -1;
+
+	
 
 	/* Create a windowed mode window and its OpenGL context */
 	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -19,6 +25,8 @@ int main(void)
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
+
+	glewInit();
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
