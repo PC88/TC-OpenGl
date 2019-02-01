@@ -40,10 +40,10 @@ static ShaderProgramSource ParseShader(const std::string& filepath)
 			{
 				type = ShaderType::FRAGMENT;
 			}
-			else
-			{
-				ss[(int)type] << line << "/n";
-			}
+		}
+		else
+		{
+			ss[(int)type] << line << '\n'; // note single quotes -PC
 		}
 	}
 	return { ss[0].str(), ss[1].str() };
@@ -63,7 +63,7 @@ static unsigned int CompileShader(unsigned int type, const std::string& source )
 	{
 		int lenght;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &lenght);
-		char* message = (char*)alloca(lenght * sizeof(char));
+		char* message = (char*)alloca(lenght * sizeof(char)); // alloca, C style allocation on the stack, a bit strange but interesting and effective.
 		glGetShaderInfoLog(id, lenght, &lenght, message);
 		std::cout << "Failed to compile "  
 			<< (type == GL_VERTEX_SHADER ? "vertex" : "fragment") <<
@@ -148,8 +148,8 @@ int main(void)
 	std::cout << "FRAGMENT" << std::endl;
 	std::cout << source.FragmentSource << std::endl;
 
-	//unsigned int shader = CreateShader(vertexShader, fragmentShader);
-	//glUseProgram(shader);
+	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource); // changed to take in parsed shader -PC
+	glUseProgram(shader);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -166,7 +166,7 @@ int main(void)
 		glfwPollEvents();
 	}
 
-	//glDeleteProgram(shader);
+	glDeleteProgram(shader);
 	glfwTerminate();
 	return 0;
 }
