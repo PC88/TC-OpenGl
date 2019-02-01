@@ -122,19 +122,24 @@ int main(void)
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	float positons[6] // array of float to define out vertexes - PC
+	float positons[] // array of float to define out vertexes - PC
 	{
-	 -0.5f, -0.5f,
-	  0.0f,  0.5f,
-	  0.5f, -0.5f
+	 -0.5f,  -0.5f, // 0
+	  0.5f,  -0.5f, // 1
+	  0.5f,   0.5f, // 2
+	 -0.5f,   0.5f  // 3
 	};
 
-
+	unsigned int indices[] = 
+	{
+		0, 1, 2,
+		2, 3, 0
+	};
 
 	unsigned int buffer;
 	glGenBuffers(1, &buffer); // this generates a buffer and gives us back a unique ID - PC // create buffer
 	glBindBuffer(GL_ARRAY_BUFFER, buffer); // bind or select that buffer - PC
-	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positons, GL_STATIC_DRAW); // 6 times the amount of vertexes held in array "positions" - PC // define size of buffer
+	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positons, GL_STATIC_DRAW); // 6 times the amount of vertexes held in array "positions" - PC // define size of buffer
 
 	glEnableVertexAttribArray(0); // enable the VAP - PC
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);// detail on this composed in notes for future ref 
@@ -148,6 +153,11 @@ int main(void)
 	std::cout << "FRAGMENT" << std::endl;
 	std::cout << source.FragmentSource << std::endl;
 
+	unsigned int ibo;
+	glGenBuffers(1, &ibo); // this generates a buffer and gives us back a unique ID - PC // create buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); // bind or select that buffer - PC
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource); // changed to take in parsed shader -PC
 	glUseProgram(shader);
 
@@ -157,7 +167,7 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3); // Draw call - PC
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // Draw call - PC
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
