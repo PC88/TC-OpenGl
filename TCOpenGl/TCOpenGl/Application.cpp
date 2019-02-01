@@ -1,10 +1,53 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #define GLEW_STATIC
 
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
-// note: the types for tutorial functions are using primative types and not the OpenGL type defs for them, GL_ENUM etc.
+// note: the types for tutorial functions are using primitive types and not the OpenGL typedefs for them, GL_ENUM etc.
+
+struct ShaderProgramSource // struct used to end around multiple return types -PC
+{
+	std::string VertexSource;
+	std::string FragmentSource;
+};
+
+static ShaderProgramSource ParseShader(const std::string& filepath)
+{
+	std::ifstream stream(filepath);
+
+	enum class ShaderType
+	{
+		NONE = -1, VERTEX = 0, FRAGMENT = 1
+	};
+
+	std::string line;
+	std::stringstream ss[2];
+	ShaderType type = ShaderType::NONE;
+
+	while (getline(stream, line))
+	{
+		if (line.find("#shader") != std::string::npos)
+		{
+			if (line.find("vertex") != std::string::npos)
+			{
+				type = ShaderType::VERTEX;
+			}
+			else if (line.find("fragment") != std::string::npos)
+			{
+				type = ShaderType::FRAGMENT;
+			}
+			else
+			{
+				ss[(int)type] << line << "/n";
+			}
+		}
+	}
+	return { ss[0].str(), ss[1].str() };
+}
 
 static unsigned int CompileShader(unsigned int type, const std::string& source )
 {
@@ -23,7 +66,7 @@ static unsigned int CompileShader(unsigned int type, const std::string& source )
 		char* message = (char*)alloca(lenght * sizeof(char));
 		glGetShaderInfoLog(id, lenght, &lenght, message);
 		std::cout << "Failed to compile "  
-			<< (type == GL_VERTEX_SHADER ? "vertax" : "fragment") <<
+			<< (type == GL_VERTEX_SHADER ? "vertex" : "fragment") <<
 			"shader!" << std::endl;
 		std::cout << message << std::endl;
 		glDeleteShader(id);
@@ -96,27 +139,17 @@ int main(void)
 	glEnableVertexAttribArray(0); // enable the VAP - PC
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);// detail on this composed in notes for future ref 
 
-	std::string vertexShader = // defining these in files is a lot better -PC
-		"#version 330 core/n"
-		"/n"
-		"layout(location = 0) in vec4 position;/n" // 0 in this line is the index(the enumerated value we gave our VAP)
-		"/n"
-		"void main()/n"
-		"{/n"
-		"gl_position = position;/n"
-		"}/n";
+	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");// this is relative to the "Working Directory" which when run in debug is the ProjectDirectory
+	// note above that the slashes in the string literal are reversed to stop an escape sequence
 
-	std::string fragmentShader = // defining these in files is a lot better -PC
-		"#version 330 core/n"
-		"/n"
-		"layout(location = 0) out vec4 color;/n" // 0 in this line is the index(the enumerated value we gave our VAP)
-		"/n"
-		"void main()/n"
-		"{/n"
-		" color = vec4(1.0, 0.0, 0.0, 1.0);/n" //RGBA
-		"}/n";
-	unsigned int shader = CreateShader(vertexShader, fragmentShader);
-	glUseProgram(shader);
+	std::cout << "VERTEX" << std::endl;
+	std::cout << source.VertexSource << std::endl;
+
+	std::cout << "FRAGMENT" << std::endl;
+	std::cout << source.FragmentSource << std::endl;
+
+	//unsigned int shader = CreateShader(vertexShader, fragmentShader);
+	//glUseProgram(shader);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -133,7 +166,7 @@ int main(void)
 		glfwPollEvents();
 	}
 
-	glDeleteProgram(shader);
+	//glDeleteProgram(shader);
 	glfwTerminate();
 	return 0;
 }
