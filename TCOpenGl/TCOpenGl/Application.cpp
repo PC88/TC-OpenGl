@@ -2,12 +2,28 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+// NOTE glGetError() can be replaced with the improved glDebugMessageCallback() - V4.3 and above only
 
 #define GLEW_STATIC
 
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 // note: the types for tutorial functions are using primitive types and not the OpenGL typedefs for them, GL_ENUM etc.
+
+static void GLClearError()
+{
+	while (glGetError() != GL_NO_ERROR)
+	{
+	}
+}
+
+static void GLLogCall()
+{
+	while (GLenum error = glGetError())
+	{
+		std::cout << "[OpenGL Error (" << error << ")" << std::endl;
+	}
+}
 
 struct ShaderProgramSource // struct used to end around multiple return types -PC
 {
