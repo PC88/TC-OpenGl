@@ -127,6 +127,10 @@ int main(void)
 		return -1;
 	}
 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // changed to Core over Compat, VAO`s added -PC
+
 	/* Create a windowed mode window and its OpenGL context */
 	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
 	if (!window)
@@ -160,6 +164,10 @@ int main(void)
 		2, 3, 0
 	};
 
+	unsigned int vao; // Vertax Array Object -PC
+	GLCall(glGenVertexArrays(1, &vao));
+	GLCall(glBindVertexArray(vao));
+
 	unsigned int buffer;
 	GLCall(glGenBuffers(1, &buffer)); // this generates a buffer and gives us back a unique ID - PC // create buffer
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer)); // bind or select that buffer - PC
@@ -183,13 +191,20 @@ int main(void)
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource); // changed to take in parsed shader -PC
-	GLCall(glUseProgram(shader));
+	GLCall(glUseProgram(shader)); // needed for uniform binding outside of loop - cleanup PC
 
 	float r = 0.0f;
 	float increment = 0.05f;
 
 	GLCall(int location = glGetUniformLocation(shader,"u_Color"));
 	ASSERT(location != -1);
+	GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // Didactic - potential remove -PC
+
+	GLCall(glUseProgram(0)); // Didactic - potential remove -PC
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0)); // Didactic - potential remove -PC
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)); // Didactic - potential remove -PC
+
+
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -197,7 +212,12 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // uniforms as per drawcall -PC
+		GLCall(glUseProgram(shader));
+		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // uniforms as per draw call -PC
+
+		GLCall(glBindVertexArray(vao));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+
 		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // Draw call, wrapped in debug macro - PC
 
 		if (r > 1.0f)
