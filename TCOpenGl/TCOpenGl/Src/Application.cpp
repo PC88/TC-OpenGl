@@ -2,37 +2,15 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-// NOTE glGetError() can be replaced with the improved glDebugMessageCallback() - V4.3 and above only
 
-#define GLEW_STATIC
-#define ASSERT(x) if (!(x)) __debugbreak(); // MSVC compiler intrinsic which will break upon a false return, __ denotes it -PC
-// below Macro treats x as a type, and will execute x if it is a function. "\" on below lines means no new line so we can clearly define the Macro -PC
-#define GLCall(x) GLClearError();\
-   x;\
-   ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 // note: the types for tutorial functions are using primitive types and not the OpenGL typedefs for them, GL_ENUM etc.
 
-static void GLClearError()
-{
-	while (glGetError() != GL_NO_ERROR)
-	{
-
-	}
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-	while (GLenum error = glGetError())
-	{
-		std::cout << "[OpenGL Error (" << error << ")" << function <<
-			" " << file << ":" << line << std::endl;
-		return false;
-	}
-	return true;
-}
 
 struct ShaderProgramSource // struct used to end around multiple return types -PC
 {
@@ -164,17 +142,16 @@ int main(void)
 		2, 3, 0
 	};
 
-	unsigned int vao; // Vertax Array Object -PC
+	unsigned int vao; // Vertex Array Object -PC
 	GLCall(glGenVertexArrays(1, &vao));
 	GLCall(glBindVertexArray(vao));
 
-	unsigned int buffer;
-	GLCall(glGenBuffers(1, &buffer)); // this generates a buffer and gives us back a unique ID - PC // create buffer
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer)); // bind or select that buffer - PC
-	GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positons, GL_STATIC_DRAW)); // 6 times the amount of vertexes held in array "positions" - PC // define size of buffer
+	VertexBuffer vb(positons, 4 * 2 * sizeof(float));
 
 	GLCall(glEnableVertexAttribArray(0)); // enable the VAP - PC
 	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));// detail on this composed in notes for future ref 
+
+	IndexBuffer ib(indices, 6);
 
 	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");// this is relative to the "Working Directory" which when run in debug is the ProjectDirectory
 	// note above that the slashes in the string literal are reversed to stop an escape sequence
@@ -185,10 +162,6 @@ int main(void)
 	std::cout << "FRAGMENT" << std::endl;
 	std::cout << source.FragmentSource << std::endl;
 
-	unsigned int ibo;
-	GLCall(glGenBuffers(1, &ibo)); // this generates a buffer and gives us back a unique ID - PC // create buffer
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)); // bind or select that buffer - PC
-	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource); // changed to take in parsed shader -PC
 	GLCall(glUseProgram(shader)); // needed for uniform binding outside of loop - cleanup PC
@@ -216,7 +189,7 @@ int main(void)
 		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // uniforms as per draw call -PC
 
 		GLCall(glBindVertexArray(vao));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+		ib.Bind();// GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 
 		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // Draw call, wrapped in debug macro - PC
 
