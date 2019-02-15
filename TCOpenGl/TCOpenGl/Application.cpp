@@ -127,90 +127,91 @@ int main(void)
 	}
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
+	{ // this scope exists to deal with the issue of GL`s error being infinte looped - TODO heap allocate so this dosent exist -PC
+		float positons[] // array of float to define out vertexes - PC
+		{
+		 -0.5f,  -0.5f, // 0
+		  0.5f,  -0.5f, // 1
+		  0.5f,   0.5f, // 2
+		 -0.5f,   0.5f  // 3
+		};
 
-	float positons[] // array of float to define out vertexes - PC
-	{
-	 -0.5f,  -0.5f, // 0
-	  0.5f,  -0.5f, // 1
-	  0.5f,   0.5f, // 2
-	 -0.5f,   0.5f  // 3
-	};
+		unsigned int indices[] =
+		{
+			0, 1, 2,
+			2, 3, 0
+		};
 
-	unsigned int indices[] = 
-	{
-		0, 1, 2,
-		2, 3, 0
-	};
-
-	unsigned int vao; // Vertex Array Object -PC
-	GLCall(glGenVertexArrays(1, &vao));
-	GLCall(glBindVertexArray(vao));
-
-	VertexBuffer vb(positons, 4 * 2 * sizeof(float));
-
-	GLCall(glEnableVertexAttribArray(0)); // enable the VAP - PC
-	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));// detail on this composed in notes for future ref 
-
-	IndexBuffer ib(indices, 6);
-
-	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");// this is relative to the "Working Directory" which when run in debug is the ProjectDirectory
-	// note above that the slashes in the string literal are reversed to stop an escape sequence
-
-	std::cout << "VERTEX" << std::endl;
-	std::cout << source.VertexSource << std::endl;
-
-	std::cout << "FRAGMENT" << std::endl;
-	std::cout << source.FragmentSource << std::endl;
-
-
-	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource); // changed to take in parsed shader -PC
-	GLCall(glUseProgram(shader)); // needed for uniform binding outside of loop - cleanup PC
-
-	float r = 0.0f;
-	float increment = 0.05f;
-
-	GLCall(int location = glGetUniformLocation(shader,"u_Color"));
-	ASSERT(location != -1);
-	GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // Didactic - potential remove -PC
-
-	GLCall(glUseProgram(0)); // Didactic - potential remove -PC
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0)); // Didactic - potential remove -PC
-	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)); // Didactic - potential remove -PC
-
-
-
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
-	{
-		/* Render here */
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		GLCall(glUseProgram(shader));
-		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // uniforms as per draw call -PC
-
+		unsigned int vao; // Vertex Array Object -PC
+		GLCall(glGenVertexArrays(1, &vao));
 		GLCall(glBindVertexArray(vao));
-		ib.Bind();// GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // Draw call, wrapped in debug macro - PC
+		VertexBuffer vb(positons, 4 * 2 * sizeof(float));
 
-		if (r > 1.0f)
+		GLCall(glEnableVertexAttribArray(0)); // enable the VAP - PC
+		GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));// detail on this composed in notes for future ref 
+
+		IndexBuffer ib(indices, 6);
+
+		ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");// this is relative to the "Working Directory" which when run in debug is the ProjectDirectory
+		// note above that the slashes in the string literal are reversed to stop an escape sequence
+
+		std::cout << "VERTEX" << std::endl;
+		std::cout << source.VertexSource << std::endl;
+
+		std::cout << "FRAGMENT" << std::endl;
+		std::cout << source.FragmentSource << std::endl;
+
+
+		unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource); // changed to take in parsed shader -PC
+		GLCall(glUseProgram(shader)); // needed for uniform binding outside of loop - cleanup PC
+
+		float r = 0.0f;
+		float increment = 0.05f;
+
+		GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+		ASSERT(location != -1);
+		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // Didactic - potential remove -PC
+
+		GLCall(glUseProgram(0)); // Didactic - potential remove -PC
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0)); // Didactic - potential remove -PC
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)); // Didactic - potential remove -PC
+
+
+
+		/* Loop until the user closes the window */
+		while (!glfwWindowShouldClose(window))
 		{
-			increment = -0.05f;
-		}
-		else if (r < 0.0f)
-		{
-			increment = 0.05f;
-		}
-		r += increment;
-		std::cout << r << std::endl;
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
+			/* Render here */
+			glClear(GL_COLOR_BUFFER_BIT);
 
-		/* Poll for and process events */
-		glfwPollEvents();
+			GLCall(glUseProgram(shader));
+			GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f)); // uniforms as per draw call -PC
+
+			GLCall(glBindVertexArray(vao));
+			ib.Bind();// GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+
+			GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr)); // Draw call, wrapped in debug macro - PC
+
+			if (r > 1.0f)
+			{
+				increment = -0.05f;
+			}
+			else if (r < 0.0f)
+			{
+				increment = 0.05f;
+			}
+			r += increment;
+
+			/* Swap front and back buffers */
+			glfwSwapBuffers(window);
+
+			/* Poll for and process events */
+			glfwPollEvents();
+		}
+
+		GLCall(glDeleteProgram(shader));
 	}
-
-	GLCall(glDeleteProgram(shader));
 	glfwTerminate();
 	return 0;
 }
