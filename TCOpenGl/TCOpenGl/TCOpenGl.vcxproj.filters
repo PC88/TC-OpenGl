@@ -7,6 +7,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBufferLayout.cpp" />
+    <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IndexBuffer.h" />
@@ -17,6 +18,7 @@
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBufferLayout.h" />
+    <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Res\Shaders\Basic.shader" />
