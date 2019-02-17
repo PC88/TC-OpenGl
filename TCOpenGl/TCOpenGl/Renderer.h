@@ -2,6 +2,10 @@
 
 #include <GL\glew.h>
 
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
+
 // NOTE glGetError() can be replaced with the improved glDebugMessageCallback() - V4.3 and above only
 
 #define ASSERT(x) if (!(x)) __debugbreak(); // MSVC compiler intrinsic which will break upon a false return, __ denotes it -PC
@@ -16,4 +20,17 @@
 void GLClearError();
 
 bool GLLogCall(const char* function, const char* file, int line);
+
+class Renderer
+{
+public:
+	Renderer();
+	virtual ~Renderer();
+
+	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+
+	void Clear() const;
+private:
+
+};
 

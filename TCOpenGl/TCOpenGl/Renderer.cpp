@@ -20,3 +20,25 @@ bool GLLogCall(const char* function, const char* file, int line)
 	}
 	return true;
 }
+
+Renderer::Renderer()
+{
+}
+
+Renderer::~Renderer()
+{
+}
+
+void Renderer::Draw(const VertexArray & va, const IndexBuffer & ib, const Shader & shader) const
+{
+	shader.Bind();
+	va.Bind();  // GLCall(glBindVertexArray(vao)); - replaced
+	ib.Bind();  // GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)); - replaced
+
+	GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr)); // Draw call, wrapped in debug macro - PC
+}
+
+void Renderer::Clear() const
+{
+	GLCall(glClear(GL_COLOR_BUFFER_BIT));
+}
