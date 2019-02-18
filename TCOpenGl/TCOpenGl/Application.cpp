@@ -9,6 +9,7 @@
 #include "VertexBufferLayout.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Texture.h"
 
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
@@ -46,13 +47,13 @@ int main(void)
 	}
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
-	{ // this scope exists to deal with the issue of GL`s error being infinte looped - TODO heap allocate so this dosent exist -PC
+	{ // this scope exists to deal with the issue of GL`s error being infinite looped - TODO heap allocate so this dose not exist -PC
 		float positons[] // array of float to define out vertexes - PC
 		{
-		 -0.5f,  -0.5f, // 0
-		  0.5f,  -0.5f, // 1
-		  0.5f,   0.5f, // 2
-		 -0.5f,   0.5f  // 3
+		 -0.5f,  -0.5f, 0.0f, 0.0f,// 0 // each line now is basically 2 vec2`s
+		  0.5f,  -0.5f, 1.0f, 0.0f,// 1 // the first 2 are vertex positions, the second 2 are Texture coordinates -PC
+		  0.5f,   0.5f, 1.0f, 1.0f,// 2
+		 -0.5f,   0.5f, 0.0f, 1.0f // 3
 		};
 
 		unsigned int indices[] =
@@ -61,10 +62,14 @@ int main(void)
 			2, 3, 0
 		};
 
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
 		VertexArray va;
-		VertexBuffer vb(positons, 4 * 2 * sizeof(float));
+		VertexBuffer vb(positons, 4 * 4 * sizeof(float)); // increased to 4 instead of 2 to take on the load of texture cooridintes -PC
 
 		VertexBufferLayout layout;
+		layout.Push<float>(2); // here is the separation of the data in the float array "positions" -PC
 		layout.Push<float>(2);
 		// NOTE the above line replaced:
 		//GLCall(glEnableVertexAttribArray(0));
@@ -80,14 +85,15 @@ int main(void)
 		float increment = 0.05f;
 		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
+		Texture texture("res/textures/testPNG.png");
+		texture.Bind(); // remember this take in a "slot"
+		shader.SetUniform1i("u_Texture", 0); // second param matches above "slot", default is 0
+
 		/*std::cout << "VERTEX" << std::endl;
 		std::cout << source.VertexSource << std::endl;
 
 		std::cout << "FRAGMENT" << std::endl;
 		std::cout << source.FragmentSource << std::endl;*/
-
-
-		
 
 		va.Unbind();
 		vb.UnBind();
