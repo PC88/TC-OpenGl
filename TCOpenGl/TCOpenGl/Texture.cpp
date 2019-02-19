@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include "Renderer.h"
-#include "Vendor/stb_image/stb_image.h"
+#include "stb_image/stb_image.h"
 
 
 

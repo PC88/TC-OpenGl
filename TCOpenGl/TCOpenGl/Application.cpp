@@ -11,6 +11,9 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include "glm\glm.hpp"
+#include "glm\gtc\matrix_transform.hpp"
+
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 // note: the types for tutorial functions are using primitive types and not the OpenGL typedefs for them, GL_ENUM etc.
@@ -79,11 +82,14 @@ int main(void)
 
 		IndexBuffer ib(indices, 6);
 
+		glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind(); // gl use program shader -PC
 		float r = 0.0f;
 		float increment = 0.05f;
 		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+		shader.SetUniformMat4f("u_MVP", proj);
 
 		Texture texture("res/textures/testPNG.png");
 		texture.Bind(); // remember this take in a "slot"
