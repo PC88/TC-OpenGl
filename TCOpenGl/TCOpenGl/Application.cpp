@@ -83,13 +83,17 @@ int main(void)
 		IndexBuffer ib(indices, 6);
 
 		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+
+		glm::mat4 mvp = proj * view * model; // this is in coloumb Major ordering as per OpenGL, this means in DX or Row Major ordering this would be multiplied M*V*P -PC
 
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind(); // gl use program shader -PC
 		float r = 0.0f;
 		float increment = 0.05f;
 		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_MVP", proj);
+		shader.SetUniformMat4f("u_MVP", mvp); // was proj now MVP -PC
 
 		Texture texture("res/textures/testPNG.png");
 		texture.Bind(); // remember this take in a "slot"
