@@ -57,10 +57,10 @@ int main(void)
 	{ // this scope exists to deal with the issue of GL`s error being infinite looped - TODO heap allocate so this dose not exist -PC
 		float positons[] // array of float to define out vertexes - PC
 		{
-		  100.0f, 100.0f, 0.0f, 0.0f,// 0 // each line now is basically 2 vec2`s
-		  200.0f, 100.0f, 1.0f, 0.0f,// 1 // the first 2 are vertex positions, the second 2 are Texture coordinates -PC
-		  200.0f, 200.0f, 1.0f, 1.0f,// 2
-		  100.0,  200.0f, 0.0f, 1.0f // 3
+		  -50.0f, -50.0f, 0.0f, 0.0f,// 0 // each line now is basically 2 vec2`s
+		  50.0f, -50.0f, 1.0f, 0.0f,// 1 // the first 2 are vertex positions, the second 2 are Texture coordinates -PC
+		  50.0f, 50.0f, 1.0f, 1.0f,// 2
+		  -50.0,  50.0f, 0.0f, 1.0f // 3
 		};
 
 		unsigned int indices[] =
@@ -87,10 +87,7 @@ int main(void)
 		IndexBuffer ib(indices, 6);
 
 		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
-
-		glm::mat4 mvp = proj * view * model; // this is in coloumb Major ordering as per OpenGL, this means in DX or Row Major ordering this would be multiplied M*V*P -PC
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)); // just an identity mat for now, will change -PC
 
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind(); // gl use program shader -PC
@@ -120,7 +117,9 @@ int main(void)
 		ImGui_ImplOpenGL3_Init("#version 130"); // explicit version statement - PC
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui::StyleColorsDark();
-		glm::vec3 translation(200, 200, 0); // added for slider minip
+
+		glm::vec3 translationA(200, 200, 0); // added for slider minip
+		glm::vec3 translationB(400, 200, 0);
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -132,15 +131,23 @@ int main(void)
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
+			{
+				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+				glm::mat4 mvp = proj * view * model; // this is in coloumb Major ordering as per OpenGL, this means in DX or Row Major ordering this would be multiplied M*V*P -PC
+				shader.Bind();
+				shader.SetUniformMat4f("u_MVP", mvp);
+				renderer.Draw(va, ib, shader);
+			}
 
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), translation); 
-			glm::mat4 mvp = proj * view * model; // this is in coloumb Major ordering as per OpenGL, this means in DX or Row Major ordering this would be multiplied M*V*P -PC
-
-			shader.Bind();
-			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-			shader.SetUniformMat4f("u_MVP", mvp); // was proj now MVP -PC
-
-			renderer.Draw(va, ib, shader);
+			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f); //redundant, but didactic -PC
+			 
+			{
+				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+				glm::mat4 mvp = proj * view * model; // this is in coloumb Major ordering as per OpenGL, this means in DX or Row Major ordering this would be multiplied M*V*P -PC
+				shader.Bind();
+				shader.SetUniformMat4f("u_MVP", mvp);
+				renderer.Draw(va, ib, shader);
+			}
 
 			if (r > 1.0f)
 			{
@@ -152,13 +159,12 @@ int main(void)
 			}
 			r += increment;
 
-
 			// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 			{
 
 				ImGui::Begin("Debug!");                          // Create a window 
-				ImGui::SliderFloat3("translation", &translation.x, 0.0f, 960.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-
+				ImGui::SliderFloat3("translation A", &translationA.x, 0.0f, 960.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+				ImGui::SliderFloat3("translation B", &translationB.x, 0.0f, 960.0f);
 				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 				ImGui::End();
 			}
