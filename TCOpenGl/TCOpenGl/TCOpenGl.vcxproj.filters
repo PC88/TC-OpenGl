@@ -17,6 +17,8 @@
     <ClCompile Include="Vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Vendor\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Vendor\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="tests\Test.cpp" />
+    <ClCompile Include="tests\TestClearColor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IndexBuffer.h" />
@@ -278,6 +280,8 @@
     <ClInclude Include="Vendor\imgui\imstb_truetype.h" />
     <ClInclude Include="Vendor\imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="Vendor\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="tests\Test.h" />
+    <ClInclude Include="tests\TestClearColor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Res\Shaders\Basic.shader" />

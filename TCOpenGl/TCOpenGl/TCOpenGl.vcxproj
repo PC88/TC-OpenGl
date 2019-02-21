@@ -87,7 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dev\GLFW\include;$(SolutionDir)Dev\GLEW\include;$(SolutionDir)TCOpenGl\Vendor;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dev\GLFW\include;$(SolutionDir)Dev\GLEW\include;$(SolutionDir)TCOpenGl\Vendor;$(SolutionDir)TCOpenGl\tests;$(SolutionDir)TCOpenGl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glew32d.lib;opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);glew32d.lib;</AdditionalDependencies>
@@ -115,7 +115,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dev\GLFW\include;$(SolutionDir)Dev\GLEW\include;$(SolutionDir)TCOpenGl\Vendor;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dev\GLFW\include;$(SolutionDir)Dev\GLEW\include;$(SolutionDir)TCOpenGl\Vendor;$(SolutionDir)TCOpenGl\tests;$(SolutionDir)TCOpenGl</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -146,6 +146,8 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="tests\TestClearColor.cpp" />
+    <ClCompile Include="tests\Test.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vendor\glm\detail\glm.cpp" />
     <ClCompile Include="Vendor\imgui\imgui.cpp" />
@@ -300,6 +302,8 @@
     <ClInclude Include="Src\IndexBuffer.h" />
     <ClInclude Include="Src\Renderer.h" />
     <ClInclude Include="Src\VertexBuffer.h" />
+    <ClInclude Include="tests\TestClearColor.h" />
+    <ClInclude Include="tests\Test.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vendor\glm\common.hpp" />
     <ClInclude Include="Vendor\glm\detail\compute_common.hpp" />
