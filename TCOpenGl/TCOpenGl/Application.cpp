@@ -14,6 +14,10 @@
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 
+#include "imgui\imgui.h"
+#include "imgui\imgui_impl_glfw.h"
+#include "imgui\imgui_impl_opengl3.h"
+
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 // note: the types for tutorial functions are using primitive types and not the OpenGL typedefs for them, GL_ENUM etc.
@@ -93,7 +97,6 @@ int main(void)
 		float r = 0.0f;
 		float increment = 0.05f;
 		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_MVP", mvp); // was proj now MVP -PC
 
 		Texture texture("res/textures/testPNG.png");
 		texture.Bind(); // remember this take in a "slot"
@@ -112,15 +115,30 @@ int main(void)
 
 		Renderer renderer;
 
+		// IMGUI setup, more modern iteration that video`s -PC
+		ImGui::CreateContext();
+		ImGui_ImplOpenGL3_Init("#version 130"); // explicit version statement - PC
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui::StyleColorsDark();
+		glm::vec3 translation(200, 200, 0); // added for slider minip
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
 			/* Render here */
 			renderer.Clear();
-			
+
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
+
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), translation); 
+			glm::mat4 mvp = proj * view * model; // this is in coloumb Major ordering as per OpenGL, this means in DX or Row Major ordering this would be multiplied M*V*P -PC
+
 			shader.Bind();
 			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+			shader.SetUniformMat4f("u_MVP", mvp); // was proj now MVP -PC
 
 			renderer.Draw(va, ib, shader);
 
@@ -134,6 +152,21 @@ int main(void)
 			}
 			r += increment;
 
+
+			// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+			{
+
+				ImGui::Begin("Debug!");                          // Create a window 
+				ImGui::SliderFloat3("translation", &translation.x, 0.0f, 960.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+				ImGui::End();
+			}
+
+
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
 
@@ -141,6 +174,9 @@ int main(void)
 			glfwPollEvents();
 		}
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui::DestroyContext();
 	glfwTerminate();
 	return 0;
 }
