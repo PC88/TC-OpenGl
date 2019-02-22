@@ -19,6 +19,7 @@
     <ClCompile Include="Vendor\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="tests\Test.cpp" />
     <ClCompile Include="tests\TestClearColor.cpp" />
+    <ClCompile Include="tests\TestMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IndexBuffer.h" />
@@ -282,6 +283,7 @@
     <ClInclude Include="Vendor\imgui\imgui_impl_glfw.h" />
     <ClInclude Include="tests\Test.h" />
     <ClInclude Include="tests\TestClearColor.h" />
+    <ClInclude Include="tests\TestMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Res\Shaders\Basic.shader" />

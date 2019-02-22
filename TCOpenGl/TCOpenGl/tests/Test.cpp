@@ -1,6 +1,6 @@
 #include "Test.h"
 
-namespace test {
+namespace tests {
 
 	Test::Test()
 	{

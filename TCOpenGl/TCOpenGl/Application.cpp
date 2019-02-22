@@ -19,6 +19,7 @@
 #include "imgui\imgui_impl_opengl3.h"
 
 #include "tests\TestClearColor.h"
+#include "tests\TestMenu.h"
 
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
@@ -70,22 +71,37 @@ int main(void)
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui::StyleColorsDark();
 
-		test::TestClearColor test;
+		tests::Test* currentTest = nullptr;
+		tests::TestMenu* testMenu = new tests::TestMenu(currentTest);
+		currentTest = testMenu;
+
+		testMenu->RegisterTest<tests::TestClearColor>("Clear Color");
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
 			/* Render here */
+			GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f)); // cheap can be removed later -PC
 			renderer.Clear();
 
-			test.OnUpdate(0.0f);
-			test.OnRender();
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
-			test.OnImGuiRender();
+			if (currentTest)
+			{
+				currentTest->OnUpdate(0.0f);
+				currentTest->OnRender();
+				ImGui::Begin("Test");
+				if (currentTest != testMenu && ImGui::Button("<-"))
+				{
+					delete currentTest;
+					currentTest = testMenu;
+				}
+				currentTest->OnImGuiRender();
+				ImGui::End();
+			}
 
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -95,6 +111,11 @@ int main(void)
 
 			/* Poll for and process events */
 			glfwPollEvents();
+		}
+		delete currentTest;
+		if (currentTest != testMenu)
+		{
+			delete testMenu;
 		}
 	}
 
