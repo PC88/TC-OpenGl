@@ -149,6 +149,7 @@
     <ClCompile Include="tests\TestMenu.cpp" />
     <ClCompile Include="tests\TestClearColor.cpp" />
     <ClCompile Include="tests\Test.cpp" />
+    <ClCompile Include="tests\TestTexture2D.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vendor\glm\detail\glm.cpp" />
     <ClCompile Include="Vendor\imgui\imgui.cpp" />
@@ -306,6 +307,7 @@
     <ClInclude Include="tests\TestMenu.h" />
     <ClInclude Include="tests\TestClearColor.h" />
     <ClInclude Include="tests\Test.h" />
+    <ClInclude Include="tests\TestTexture2D.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vendor\glm\common.hpp" />
     <ClInclude Include="Vendor\glm\detail\compute_common.hpp" />
