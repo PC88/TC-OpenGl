@@ -9,7 +9,7 @@ struct VertexBufferElement
 	unsigned char normalized;
 
 	static unsigned int GetSizeOfType(unsigned int type)
-	{
+	{ // add glew query for type
 		switch (type)
 		{
 			case GL_FLOAT:         return 4;
