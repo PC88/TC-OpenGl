@@ -17,7 +17,7 @@ namespace tests {
 		{
 		  -50.0f, -50.0f, 0.0f, 0.0f,// 0 // each line now is basically 2 vec2`s
 		  50.0f, -50.0f, 1.0f, 0.0f,// 1 // the first 2 are vertex positions, the second 2 are Texture coordinates -PC
-		  50.0f, 50.0f, 1.0f, 1.0f,// 2
+		  50.0f, 50.0f, 1.0f, 1.0f, // 2
 		  -50.0,  50.0f, 0.0f, 1.0f // 3
 		};
 

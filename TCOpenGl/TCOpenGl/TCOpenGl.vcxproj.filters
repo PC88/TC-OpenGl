@@ -420,5 +420,6 @@
     <None Include="Vendor\glm\gtx\vector_angle.inl" />
     <None Include="Vendor\glm\gtx\vector_query.inl" />
     <None Include="Vendor\glm\gtx\wrap.inl" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

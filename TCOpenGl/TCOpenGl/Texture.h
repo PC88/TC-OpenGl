@@ -6,7 +6,7 @@ class Texture
 private:
 	unsigned int m_RendererID;
 	std::string m_FilePath;
-	unsigned char* m_LocalBuffer;
+	unsigned char* m_LocalBuffer; // for stb_image to clear its image data
 	int m_Width, m_Height, m_BPP; // BPP: bytes per pixel, which for a RGBA image is 4 bytes -PC
 public:
 	Texture(const std::string& path);
