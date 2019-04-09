@@ -35,6 +35,7 @@ void Renderer::Draw(const VertexArray & va, const IndexBuffer & ib, const Shader
 	va.Bind();  // GLCall(glBindVertexArray(vao)); - replaced
 	ib.Bind();  // GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)); - replaced
 
+	// nullptr is the last param here because IndexBuffer is bound -PC
 	GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr)); // Draw call, wrapped in debug macro - PC
 }
 

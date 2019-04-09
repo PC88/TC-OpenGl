@@ -25,7 +25,7 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 	{
 		const auto& element = elements[i];
 		GLCall(glEnableVertexAttribArray(i)); // enable the VAP - PC
-		GLCall(glVertexAttribPointer(i, element.count , element.type, element.normalized, layout.GetStride(), (const void*)offset));// detail on this composed in notes for future ref
+		GLCall(glVertexAttribPointer(i, element.count , element.type, element.normalized, layout.GetStride(), (const void*)offset));// detail on this composed in notes for future ref, see Docs -PC
 		offset += element.count * VertexBufferElement::GetSizeOfType(element.type); // after each iteration modify the offset -PC
 	}
 }

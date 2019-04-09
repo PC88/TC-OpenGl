@@ -17,14 +17,14 @@ namespace tests {
 		{
 		  -50.0f, -50.0f, 0.0f, 0.0f,// 0 // each line now is basically 2 vec2`s
 		  50.0f, -50.0f, 1.0f, 0.0f, // 1 // the first 2 are vertex positions, the second 2 are Texture coordinates -PC
-		  50.0f, 50.0f, 1.0f, 1.0f,  // 2
+		  50.0f, 50.0f, 1.0f, 1.0f,  // 2 // the numbering here corresponds to the index list in, Indices - its 6 because Triangles is used in draw -PC
 		  -50.0,  50.0f, 0.0f, 1.0f  // 3
 		};
 
 		unsigned int indices[] =
 		{
-			0, 1, 2,
-			2, 3, 0
+			0, 1, 2, // first triangle -PC
+			2, 3, 0  // second triangle - PC
 		};
 
 		GLCall(glEnable(GL_BLEND));
@@ -40,7 +40,7 @@ namespace tests {
 
 		m_Shader = std::make_unique<Shader>("res/shaders/Basic.shader");
 		m_Shader->Bind(); // gl use program shader -PC
-		m_Shader->SetUniform4f("u_Color", 0.8, 0.3f, 0.8f, 1.0f);
+		m_Shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
 		m_Texture = std::make_unique<Texture>("res/textures/testPNG.png");
 		m_Shader->SetUniform1i("u_Texture", 0); // second param matches above "slot", default is 0
